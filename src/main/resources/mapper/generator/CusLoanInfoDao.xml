@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.CusLoanInfoDao">
+
+	
+		<!-- 根据贷款信息Id查询用户信息 -->
+		<select id="selectById" resultType="com.yjcaifu.modules.generator.entity.CusLoanInfoEntity">
+			select a.*,b.realname from cus_loan_info a INNER JOIN cus_personal_info b on a.ref_id=b.id where a.id = #{id}
+		</select>
+		
+		
+		<!-- 查询所有个人信息Page（para：姓名） -->
+		<select id="selectAll" resultType="com.yjcaifu.modules.generator.entity.CusLoanInfoEntity">
+			select a.*,b.realname from cus_loan_info a INNER JOIN cus_personal_info b on a.ref_id=b.id where 1=1 
+			<if test="realname != null and realname !='' ">
+				and b.realname like concat('%',#{realname},'%') 
+			</if>
+		</select>
+		
+		<!-- 删除所有个人贷款信息by 个人征信id-->
+		<delete id="deleteAllByPerCreditId" >
+        	delete from cus_loan_info where ref_id = #{id} 
+   		 </delete>
+		
+		<!-- 查询所有个人信息Page（para：姓名） -->
+		<select id="queryListByCreditId" resultType="com.yjcaifu.modules.generator.entity.CusLoanInfoEntity">
+			select a.*,b.name as loanPropertyName,c.name as guaranteePropetyName,d.type as repaymentTypeName  from cus_loan_info a  
+			left join sys_loan_types b on a.loan_property=b.id 
+			left join sys_ensure_property c on a.guarantee_propety=c.id 
+			left join reimbursement_type d on a.repayment_type=d.id 
+			where  a.ref_id=#{id}
+		</select>
+		
+		<!-- 批量删除贷款信息（para：个人征信id）-->
+		<delete id="deleteByCreditId" >
+	        	<foreach collection="list" item="creditIds"  open=" delete from cus_loan_info where ref_id in  (" separator="," close=")" >
+	            	#{creditIds}
+	        	</foreach>
+   		 </delete>
+</mapper>

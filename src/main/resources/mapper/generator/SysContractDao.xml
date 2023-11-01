@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.SysContractDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.yjcaifu.modules.generator.entity.SysContractEntity" id="sysContractMap">
+        <result property="id" column="id"/>
+        <result property="fileName" column="file_name"/>
+        <result property="fileType" column="file_type"/>
+    </resultMap>
+
+	<!-- 根据id删除数据-->
+		<delete id="deleteByConId" >
+			delete from sys_contract where id=#{id}
+   		 </delete>
+
+</mapper>

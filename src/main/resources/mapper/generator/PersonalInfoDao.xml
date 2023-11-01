@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.PersonalInfoDao">
+
+	
+		<!-- 根据userId查询用户信息 -->
+		<select id="selectById" resultType="com.yjcaifu.modules.generator.entity.PersonalInfoEntity">
+			select a.* from cus_personal_info a where a.id = #{id}
+		</select>
+		
+		<!-- 根据进件管理id查询用户信息 -->
+		<select id="selectByBorrId" resultType="com.yjcaifu.modules.generator.entity.PersonalInfoEntity">
+			select b.*,c.area_name as cityName,e.username as empName from borrowing_information  a INNER JOIN cus_personal_info b on a.ref_id=b.id
+			 left join sys_area c on b.city=c.id 
+			 left join sys_user e on b.emp_id=e.user_id
+			where a.id = #{refId}
+		</select>
+		
+		<!-- 查询所有个人信息Page（para：姓名） -->
+		<select id="selectAll" resultType="com.yjcaifu.modules.generator.entity.PersonalInfoEntity">
+			select a.* from cus_personal_info a where 1=1 
+			<if test="realname != null and realname !='' ">
+				and a.realname like concat('%',#{realname},'%') 
+			</if>
+			order by id desc
+		</select>
+		
+		
+		<!-- 查询所有个人信息List-->
+		<select id="queryPersonalList" resultType="com.yjcaifu.modules.generator.entity.PersonalInfoEntity">
+			select a.* from cus_personal_info a  where 1=1 
+			<if test="realname != null and realname !='' ">
+				and a.realname like concat(#{realname},'%') 
+			</if>
+			<if test="id != null and id !='' ">
+				and a.id = #{id}
+			</if>
+		</select>
+		
+		<!-- // 共同借款人选中事件，返回个人信息（包含查询关系，工作单位/月收入）-->
+		<select id="intoManagePerSel" resultType="com.yjcaifu.modules.generator.entity.PersonalInfoEntity">
+			select a.* from cus_personal_info a  where a.id = #{coBorrowerId} 
+		</select>
+
+		<!-- // 房产-个人/企业信息 （params：OwnerType，realname）-->
+		<select id="nameListByOwnerType" resultType="com.yjcaifu.modules.generator.entity.TempNameEntity">
+			select a.id,a.realname from cus_personal_info a  where  a.realname like concat(#{realname},'%') 
+		</select>
+		
+		<!-- // 房产-个人/企业信息 （params：OwnerType，id）-->
+		<select id="nameListById" resultType="com.yjcaifu.modules.generator.entity.TempNameEntity">
+			select a.id,a.realname from cus_personal_info a  where  a.id = #{id}
+		</select>
+</mapper>

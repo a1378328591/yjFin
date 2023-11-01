@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.InvestigationTrialDao">
+
+	<!-- 根据refId查询用户信息 -->
+		<select id="selectByRefId" resultType="com.yjcaifu.modules.generator.entity.InvestigationTrialEntity">
+			SELECT 
+				*
+			FROM 
+				investigation_trial
+			WHERE
+				ref_id = #{refId}	
+		</select>
+		
+		<!-- 根据intoManageId查询初审信息 -->
+		<select id="selectByIntoManageId" resultType="com.yjcaifu.modules.generator.entity.InvestigationTrialEntity">
+			SELECT 
+				a.*,b.apply_time as applyTime,c.realname,d.enterprise_name as enterpriseName,e.username as recordPersonnelName,case a.result when 0 then '不通过' when '1' then '通过' else '' end as resultName
+			FROM 
+				investigation_trial a  left join borrowing_information b on a.ref_id=b.id  left join cus_personal_info c on b.ref_id=c.id left join cus_enterprise_info d on a.company_id=d.id left join sys_user e on a.record_personnel=e.user_id 
+			WHERE
+				a.ref_id = #{id}
+		</select>
+		
+		<!-- 第一次新增，根据refId查询初审表信息 -->
+		<select id="selectAll" resultType="com.yjcaifu.modules.generator.entity.InvestigationTrialEntity">
+			SELECT 
+				b.ref_id,b.money,b.time_limit,b.borrowing_purposes,b.source_repayment
+			FROM 
+				borrowing_information b 
+			WHERE 1=1 and
+				b.id = #{refId}	
+		</select>
+		
+		<!-- 修改后，根据refId查询初审表信息 -->
+		<select id="selectAfter" resultType="com.yjcaifu.modules.generator.entity.InvestigationTrialEntity">
+			SELECT 
+				a.*
+			FROM 
+				investigation_trial a 
+			WHERE 
+				a.ref_id = #{refId}	
+		</select>
+		
+		<!-- 根据refId查询姓名 -->
+		<select id="selectName" resultType="java.lang.String">
+			SELECT 
+				b.realname
+			FROM 
+				borrowing_information a join cus_personal_info b on a.ref_id=b.id
+			WHERE 1=1 and
+				a.id = #{refId}	
+		</select>
+		
+		<!-- 批量更新初审企业信息，删除后赋值空 -->
+		<update id="updateBatchByEntIds">
+			update investigation_trial set company_id = null where 
+			<foreach item="id" collection="list"  open=" company_id in(" separator="," close=")">
+				#{id}
+			</foreach>
+		</update>
+		
+		  <!-- 批量删除复审信息 para：refIds-->
+		<delete id="deleteBatchByRefIds" >
+        	delete from investigation_trial where ref_id in  
+        	<foreach collection="list"  open="(" close=")" item="refIds" separator=",">
+            		#{refIds}
+        	</foreach>
+   		 </delete>
+		
+</mapper>

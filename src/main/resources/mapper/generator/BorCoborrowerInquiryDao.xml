@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.BorCoborrowerInquiryDao">
+
+
+		<!-- 查询实地调查人（para：进件ID，实地调查人id）-->
+		<select id="queryById" resultType="com.yjcaifu.modules.generator.entity.BorCoborrowerInquiryEntity">
+			select * from bor_coborrower_inquiry a  where 1=1 and a.ref_id = #{refId} and a.inquirer = #{inquirerId}
+		</select>
+		
+		<!-- 查询实地调查人List（para：进件ID，实地调查人id）-->
+		<select id="queryList" resultType="Integer">
+			select inquirer from bor_coborrower_inquiry a  where 1=1 and a.ref_id = #{refId} 
+		</select>
+		
+		
+		<delete id="deleteBatchByIds" >
+        	delete from bor_coborrower_inquiry where ref_id = #{refId}  
+        	<if test="ids != null ">
+	        	<foreach collection="ids" item="id"  open="and inquirer not in (" separator="," close=")" >
+	            	#{id}
+	        	</foreach>
+	        </if>
+   		 </delete>
+		
+		<delete id="deleteBatchByRefId" >
+        	delete from bor_coborrower_inquiry where 
+	        	<foreach collection="list" item="refIds"  open="ref_id in (" separator="," close=")" >
+	            	#{refIds}
+	        	</foreach>
+   		 </delete>
+
+</mapper>

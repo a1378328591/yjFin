@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.BorBankstatementRecordDao">
+
+		<!-- 批量删除个人征信从表信息-->
+		<delete id="deleteByRefId" >
+			delete from bor_bankstatement_record where ref_id=#{bankStatementId}
+   		 </delete>
+   		 
+   		 <select id="queryListByMainTableId" resultType="com.yjcaifu.modules.generator.entity.CusBankStatementsEntity">
+			select 
+				b.*
+			from 
+				bor_bankstatement_record a left join cus_bank_statements b on a.bankstatement_id=b.id
+			where a.ref_id=#{bankStatementId}
+		</select>
+		
+</mapper>

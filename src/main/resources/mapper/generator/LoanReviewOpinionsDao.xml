@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.LoanReviewOpinionsDao">
+
+	<!-- 根据refId查询用户信息 -->
+		<select id="selectByrefId" resultType="com.yjcaifu.modules.generator.entity.LoanReviewOpinionsEntity">
+			SELECT 
+				a.*,b.username
+			FROM 
+				loan_review_opinions a left join sys_user b on a.personnel=b.user_id
+			WHERE
+				a.loan_middle_id = #{refId}
+			ORDER BY a.time
+		</select>
+
+
+		<!-- 根据refId,personnel,time查询用户信息 -->
+		<select id="selectOnceRecord" resultType="com.yjcaifu.modules.generator.entity.LoanReviewOpinionsEntity">
+			SELECT 
+				*
+			FROM 
+				loan_review_opinions
+			WHERE 1=1 AND
+				ref_id = #{refId} AND personnel = #{personnel} AND time = #{time}
+		</select>
+		
+		<!--  <insert id="insertMiddle" useGeneratedKeys="true" keyProperty="id" parameterType="com.yjcaifu.modules.generator.entity.LoanReviewOpinionsEntity">  
+			insert into loan_middle values(null,#{refId},#{time})
+		</insert> -->
+		
+		
+		<!-- 批量删除贷审会意见从表信息-->
+		<delete id="deleteAllByLoanMiddleId" >
+			delete from loan_review_opinions where loan_middle_id=#{id}
+   		 </delete>
+
+		<!-- 批量删除贷审会意见从表信息（para：mainTabIds）-->
+		<delete id="deleteBatchByMainTabIds" >
+			delete from loan_review_opinions where
+	        <foreach collection="list" item="mainTabIds"  open=" loan_middle_id in  (" separator="," close=")" >
+	            #{mainTabIds}
+	        </foreach>
+   		 </delete>
+</mapper>

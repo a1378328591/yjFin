@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.CusCarDao">
+
+	
+	<!-- 根据userId查询用户信息 
+		<select id="selectById" resultType="com.yjcaifu.modules.generator.entity.CusCarEntity">
+			SELECT 
+				*
+				cus_car
+			WHERE
+				id=#{id}	
+		</select>-->
+		
+		<!-- 查询所有汽车信息（根据姓名） -->
+		<select id="selectAll" resultType="com.yjcaifu.modules.generator.entity.CusCarEntity">
+			select * from (
+				select a.*,d.name as vechicleTypeName,e.name as useCharacterName,(case a.owner_type 
+						when 0 then 
+								(select realname from cus_personal_info b where a.owner=b.id) 
+						when 1 then
+							(select enterprise_name from cus_enterprise_info c where a.owner=c.id ) 
+						else 
+								null
+							end )realname 
+				from 
+					cus_car a left join sys_vehicle_types d on a.vechicle_type = d.id left join sys_use_types e on a.use_character = e.id ) f 
+			where 1=1
+			<if test="realname != null and realname !='' ">
+				and f.realname like concat('%',#{realname},'%')
+			</if>
+			<if test="ownerType != null and ownerType!= '' and ownershipId != null and ownershipId !='' ">
+				and f.owner_type = #{ownerType!=} and f.owner = #{ownershipId}
+			</if>
+			order by id desc
+		</select>
+		
+		<!-- 查询所有个人姓名 -->
+		<select id="findOwner" resultType="com.yjcaifu.modules.generator.entity.PersonalInfoEntity">
+			select 
+				id,realname
+			from 
+				cus_personal_info
+		</select>
+		
+		<!-- 查询所有汽车信息List params：ids-->
+		<select id="queryByIds" resultType="com.yjcaifu.modules.generator.entity.CusCarEntity">
+		select a.*,(case a.owner_type 
+					when 0 then 
+							(select realname from cus_personal_info b where a.owner=b.id) 
+					when 1 then
+						(select enterprise_name from cus_enterprise_info c where a.owner=c.id ) 
+					else 
+							null
+						end )ownershipname 
+			from 
+				cus_car a where 1=1
+			<if test="ids != null ">
+				<foreach collection="ids"  open=" and a.id in(" close=")" item="id" separator=",">
+            		#{id}
+        		</foreach>
+			</if>
+			order by a.id desc
+		</select>
+		
+		<!-- 查询个人名下所有车辆信息Page,包含担保人房产信息。 params：ids-->
+		<select id="listByIds" resultType="com.yjcaifu.modules.generator.entity.CusCarEntity">
+			select a.*,d.name as vechicleTypeName,e.name as useCharacterName,(case a.owner_type 
+					when 0 then 
+							(select realname from cus_personal_info b where a.owner=b.id) 
+					when 1 then
+						(select enterprise_name from cus_enterprise_info c where a.owner=c.id ) 
+					else 
+							null
+						end )ownershipname 
+			from 
+				cus_car a left join sys_vehicle_types d on a.vechicle_type = d.id left join sys_use_types e on a.use_character = e.id where 1=1 and a.owner_type = 0
+			<if test="ids != null ">
+				<foreach collection="ids"  open=" and a.owner in(" close=")" item="id" separator=",">
+            		#{id}
+        		</foreach>
+			</if>
+			order by a.id desc
+		</select>
+		<!-- 查询企业名下所有车辆信息Page,包含担保人房产信息。 params：ids-->
+		<select id="listEntByIds" resultType="com.yjcaifu.modules.generator.entity.CusCarEntity">
+			select a.*,d.name as vechicleTypeName,e.name as useCharacterName,(case a.owner_type 
+					when 0 then 
+							(select realname from cus_personal_info b where a.owner=b.id) 
+					when 1 then
+						(select enterprise_name from cus_enterprise_info c where a.owner=c.id ) 
+					else 
+							null
+						end )ownershipname 
+			from 
+				cus_car a left join sys_vehicle_types d on a.vechicle_type = d.id left join sys_use_types e on a.use_character = e.id where 1=1 and a.owner_type = 1
+			<if test="ids != null ">
+				<foreach collection="entIds"  open=" and a.owner in(" close=")" item="id" separator=",">
+            		#{id}
+        		</foreach>
+			</if>
+			order by a.id desc
+		</select>
+		<!-- 批量删除企业名义下的汽车信息（params：entIds）-->
+		<delete id="deleteBatchByEntIds" >
+			delete from cus_car a where a.owner_type = 1 
+			<if test="entIds != null ">
+	        	<foreach collection="entIds" item="id"  open=" and a.owner in  (" separator="," close=")" >
+	            	#{id}
+	        	</foreach>
+			</if>
+   		 </delete>
+   		 <!-- 批量删除个人名义下的汽车信息（params：perIds）-->
+		<delete id="deleteBatchByPerIds" >
+			delete from cus_car a where a.owner_type = 0 
+			<if test="perIds != null ">
+	        	<foreach collection="perIds" item="id"  open=" and a.owner in  (" separator="," close=")" >
+	            	#{id}
+	        	</foreach>
+			</if>
+   		 </delete>
+   		 
+   		 <!-- 查询企业名下所有车辆信息params：entIds-->
+		<select id="queryListIntByEntIds" resultType="Integer">
+			select a.id
+			from 
+				cus_car a  where 1=1 and a.owner_type = 1 and
+				<foreach collection="list"  open=" a.owner in(" close=")" item="entIds" separator=",">
+            		#{entIds}
+        		</foreach>
+		</select>
+		
+		<!-- 查询个人名下所有车辆信息params：entIds-->
+		<select id="queryListIntByPerIds" resultType="Integer">
+			select a.id
+			from 
+				cus_car a  where 1=1 and a.owner_type = 0 and
+				<foreach collection="list"  open=" a.owner in(" close=")" item="perIds" separator=",">
+            		#{perIds}
+        		</foreach>
+		</select>
+</mapper>

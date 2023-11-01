@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.common.dao.SysOfficeSpaceDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.yjcaifu.common.entity.SysOfficeSpaceEntity" id="sysOfficeSpaceMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+		<!-- 查询所有List信息 -->
+		<select id="queryList" resultType="com.yjcaifu.common.entity.SysOfficeSpaceEntity">
+			select * from sys_office_space
+		</select>
+</mapper>

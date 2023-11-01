@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.BorTaxConditionDao">
+
+	
+		<select id="queryByRefId" resultType="com.yjcaifu.modules.generator.entity.BorTaxConditionEntity">
+			select 
+				a.*
+			from 
+				bor_tax_condition a
+			where a.ref_id=#{refId}
+		</select>
+
+		<!-- 查询相关主体水电税票情况params：refIds-->
+		<select id="queryListByRefId" resultType="Integer">
+			select a.id
+			from 
+				bor_tax_condition a  where 
+				<foreach collection="list"  open=" a.ref_id in(" close=")" item="refIds" separator=",">
+            		#{refIds}
+        		</foreach>
+		</select>
+		
+		<!-- 查询相关主体水电税票情况params：refId-->
+		<select id="queryListIntByRefId" resultType="Integer">
+			select a.id
+			from 
+				bor_tax_condition a  where a.ref_id=#{refId}
+		</select>
+		<!-- 查询相关主体水电税票情况params：refId-->
+		<select id="queryListByRefIdParam" resultType="com.yjcaifu.modules.generator.entity.BorTaxConditionEntity">
+			select 
+				a.*
+			from 
+				bor_tax_condition a
+			where a.ref_id=#{refId}
+		</select>
+</mapper>

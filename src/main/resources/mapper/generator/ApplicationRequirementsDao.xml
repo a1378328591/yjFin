@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.ApplicationRequirementsDao">
+
+
+		<select id="selectPage" resultType="com.yjcaifu.modules.generator.entity.ApplicationRequirementsEntity">
+			SELECT 
+				*
+			FROM 
+				application_requirements
+			ORDER BY id DESC
+		</select>
+		
+	<!-- 信息 -->
+		<select id="select" resultType="com.yjcaifu.modules.generator.entity.ApplicationRequirementsEntity">
+			SELECT 
+				*
+			FROM 
+				application_requirements
+			ORDER BY id DESC
+		</select>
+		
+		<select id="selectUsername" resultType="java.lang.String">
+			SELECT 
+				b.username
+			FROM 
+				application_requirements a join sys_user b on a.applicant = b.user_id
+			WHERE
+				a.applicant = #{applicant}
+		</select>
+		
+		<select id="selectConfirm" resultType="java.lang.String">
+			SELECT 
+				DISTINCT b.username
+			FROM 
+				application_requirements a join sys_user b on a.confirm_personnel = b.user_id
+			WHERE
+				a.confirm_personnel = #{confirmPersonnel}
+		</select>
+		
+		<select id="selectDeptId" resultType="java.lang.Long">
+			SELECT 
+				dept_id
+			FROM 
+				sys_user_dept
+			WHERE 
+				user_id= #{userId}
+		</select>
+		
+		<select id="selectDeptName" resultType="java.lang.String">
+			SELECT 
+				name
+			FROM 
+				sys_dept
+			WHERE 
+				dept_id= #{deptId}
+		</select>
+		
+
+		<delete id="deleteOfId" >
+			delete from application_requirements where id=#{id}
+   		 </delete>
+   		 
+   		 <update id="updateState" parameterType="com.yjcaifu.modules.generator.entity.ApplicationRequirementsEntity">
+			UPDATE
+				application_requirements
+			SET
+				state_code = #{stateCode}
+			WHERE
+				id = #{id}
+		</update>
+		
+		<update id="updateconfirmPersonnel" parameterType="com.yjcaifu.modules.generator.entity.ApplicationRequirementsEntity">
+			UPDATE
+				application_requirements
+			SET
+				confirm_personnel = #{confirmPersonnel}
+			WHERE
+				id = #{id}
+		</update>
+		
+		<update id="updateExecutor" parameterType="com.yjcaifu.modules.generator.entity.ApplicationRequirementsEntity">
+			UPDATE
+				application_requirements
+			SET
+				executor = #{executor}
+			WHERE
+				id = #{id}
+		</update>
+		
+		<select id="selectExecutorName" resultType="java.lang.String">
+			SELECT 
+				DISTINCT b.username
+			FROM 
+				application_requirements a join sys_user b on a.executor = b.user_id
+			WHERE
+				a.executor = #{executor}
+		</select>
+
+</mapper>

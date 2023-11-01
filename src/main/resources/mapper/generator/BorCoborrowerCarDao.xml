@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.BorCoborrowerCarDao">
+
+
+		<!-- 查询个人车辆信息List（para：进件ID）-->
+		<select id="queryList" resultType="com.yjcaifu.modules.generator.entity.CusCarEntity">
+		select b.id,b.vechicle_type,b.issue_date,a.*,e.name as vechicleTypeName,f.name as useCharacterName,DATE_FORMAT(b.issue_date,"%Y-%m-%d") as issueDateStr,(case b.owner_type 
+				when 0 then 
+						(select realname from cus_personal_info c where b.owner=c.id) 
+				when 1 then
+					(select enterprise_name from cus_enterprise_info d where b.owner=d.id ) 
+				else 
+						null
+				end )ownershipname 
+			from bor_coborrower_car a 
+			left join cus_car b on a.car_id=b.id 
+			left join sys_vehicle_types e on b.vechicle_type = e.id 
+			left join sys_use_types f on b.use_character = f.id
+			where 1=1 and a.ref_id = #{refId}
+		</select>
+
+		<!-- 查询个人车辆信息（para：进件ID，车辆Id）-->
+		<select id="queryById" resultType="com.yjcaifu.modules.generator.entity.BorCoborrowerCarEntity">
+			select * from bor_coborrower_car a  where 1=1 and a.ref_id = #{refId} and a.car_id = #{carId}
+		</select>
+		<!-- 删除汽车信息（para：进件ID）-->
+		<delete id="deleteByRefId" >
+        	delete from bor_coborrower_car where ref_id = #{refId} 
+   		</delete>
+   		
+   		<!-- 批量删除汽车信息（para：汽车ID）-->
+		<delete id="deleteByCarIds" >
+        	delete from bor_coborrower_car  where 
+				<foreach collection="list"  open=" car_id in(" close=")" item="carIds" separator=",">
+            		#{carIds}
+        		</foreach>
+   		</delete>
+   		
+   		<!-- 批量删除汽车信息（para：进件ID）-->
+		<delete id="deleteBatchByRefIds" >
+        	delete from bor_coborrower_car  where 
+				<foreach collection="list"  open=" ref_id in(" close=")" item="refIds" separator=",">
+            		#{refIds}
+        		</foreach>
+   		</delete>
+   		
+</mapper>

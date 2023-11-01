@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.BorBorrowerCompanyinfoDao">
+
+
+	
+		<!-- 进件管理:params: -->
+		<select id="intoManageEntInfoSel" resultType="com.yjcaifu.modules.generator.entity.BorBorrowerCompanyinfoEntity">
+			select a.* from bor_borrower_companyinfo a 
+			where a.ref_id=#{refId} and a.borr_company_id=#{coBorrowerId}
+		</select>
+		
+		
+		<!-- 进件管理:params:进件id，借款/担保企业id -->
+		<select id="queryById" resultType="com.yjcaifu.modules.generator.entity.BorBorrowerCompanyinfoEntity">
+			select a.* from bor_borrower_companyinfo a 
+			where a.ref_id=#{refId} 
+		</select>
+		
+		
+		<!-- 查询借款/担保企业:params:进件id -->
+		<select id="queryBorBorrCompInfo" resultType="com.yjcaifu.modules.generator.entity.BorBorrowerCompanyinfoEntity">
+			select a.*,b.enterprise_type,b.domicile,b.legal_person,b.registered_assets,b.establishment_time,DATE_FORMAT(b.establishment_time,"%Y-%m-%d") as establishmentTimeStr,
+				b.business_scope,b.enterprise_name as enterpriseName,c.name as officeSpaceStr
+			from bor_borrower_companyinfo a 
+				left join cus_enterprise_info b on a.borr_company_id=b.id 
+				left join sys_office_space c on a.office_space=c.id
+			where a.ref_id=#{refId}
+		</select>
+		
+		<!-- 删除所有借款/担保企业信息，param：refId-->
+		<delete id="deleteAllByRefId" >
+			delete from bor_borrower_companyinfo where ref_id=#{refId}
+   		 </delete>
+   		 
+   		 <!-- 批量删除借款/担保企业信息（para：entIds）-->
+		<delete id="deleteBatchByEntIds" >
+        	delete from bor_borrower_companyinfo where 
+				<foreach collection="list"  open=" borr_company_id in(" close=")" item="entIds" separator=",">
+            		#{entIds}
+        		</foreach>
+   		</delete>
+   		
+   		 <!-- 批量删除借款/担保企业信息（para：entIds）-->
+		<delete id="deleteBatchByRefIds" >
+        	delete from bor_borrower_companyinfo where 
+				<foreach collection="list"  open=" ref_id in(" close=")" item="refIds" separator=",">
+            		#{refIds}
+        		</foreach>
+   		</delete>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.LoanMiddleDao">
+
+	<!-- 根据refId查询用户信息 -->
+		<select id="selectByRefId" resultType="com.yjcaifu.modules.generator.entity.LoanMiddleEntity">
+			SELECT 
+				a.*,b.username
+			FROM 
+				loan_middle a left join sys_user b on a.record_personnel=b.user_id
+			WHERE
+				ref_id = #{refId}
+			ORDER BY a.time
+		</select>
+		
+		<!-- 根据Id查询用户信息是否存在 -->
+		<select id="selectById" resultType="com.yjcaifu.modules.generator.entity.LoanMiddleEntity">
+			SELECT 
+				*
+			FROM 
+				loan_middle
+			WHERE
+				id = #{id}
+		</select>
+
+		<!-- 查询贷审会主表信息param：refIds-->
+		<select id="queryListByRefId" resultType="Integer">
+			select a.id
+			from 
+				loan_middle a  where 
+				<foreach collection="list"  open=" a.ref_id in(" close=")" item="refIds" separator=",">
+            		#{refIds}
+        		</foreach>
+		</select>
+
+</mapper>

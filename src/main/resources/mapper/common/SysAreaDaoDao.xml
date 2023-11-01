@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.common.dao.SysAreaDao">
+
+	
+		<!-- 查询所有city信息 -->
+		<select id="querycityList" resultType="com.yjcaifu.common.entity.SysAreaEntity">
+			select a.*,b.emp_id from cus_personal_info a INNER JOIN cus_register_info b on a.ref_id=b.id where ref_id = #{id}
+		</select>
+
+		<!-- 查询所有地区信息 -->
+		<select id="queryList" resultType="com.yjcaifu.common.entity.SysAreaEntity">
+			select a.* from sys_area a where 1=1
+			<if test="pid != null ">
+	        	and a.pid = #{pid}
+			</if>
+			<if test="pid == null ">
+	        	and a.pid is null
+			</if>
+		</select>
+</mapper>

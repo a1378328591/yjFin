@@ -1,0 +1,8 @@
+version: '2'
+services:
+  yjfintech:
+    image: yjfintech
+    ports:
+      - "8081:8081"
+    environment:
+      - spring.profiles.active=dev

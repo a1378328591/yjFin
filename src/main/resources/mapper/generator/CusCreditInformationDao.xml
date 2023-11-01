@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.CusCreditInformationDao">
+
+		
+		<!-- 根据征信信息Id查询用户信息 -->
+		<select id="selectById" resultType="com.yjcaifu.modules.generator.entity.CusCreditInformationEntity">
+			select a.*,b.realname from cus_credit_information a INNER JOIN cus_personal_info b on a.ref_id=b.id where a.id = #{id}
+		</select>
+		
+		<!-- 根据个人id查询征信信息 -->
+		<select id="selectByPerId" resultType="com.yjcaifu.modules.generator.entity.CusCreditInformationEntity">
+			select a.* from cus_credit_information a  where a.ref_id = #{perId}
+		</select>
+		
+		<!-- 查询所有个人姓名 -->
+		<select id="findHumen" resultType="com.yjcaifu.modules.generator.entity.PersonalInfoEntity">
+			select 
+				id,realname
+			from 
+				cus_personal_info
+		</select>
+		
+		<!-- 查询所有征信信息（根据姓名） -->
+		<select id="selectAll" resultType="com.yjcaifu.modules.generator.entity.CusCreditInformationEntity">
+			select 
+				a.*,b.realname
+			from 
+				cus_credit_information a join cus_personal_info b on a.ref_id=b.id where 1=1 
+			<if test="realname != null and realname !='' ">
+				and b.realname like concat('%',#{realname},'%')
+			</if>
+			order by report desc
+		</select>
+		
+		<insert id="insertAndReturnId" useGeneratedKeys="true" keyProperty="id" parameterType="com.yjcaifu.modules.generator.entity.CusCreditInformationEntity">  
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID() AS id
+		</selectKey>
+    	INSERT INTO cus_credit_information (id, ref_id, report, credit_cards, loan_balance, avg_repayment, avg_useamount, available_quota, credit_bank, number_enquiries, number_institutional, overdue_situation, abnormal_situation, other_liabilities,total_of_credit)  
+    	values(#{id},#{refId},#{report},#{creditCards},#{loanBalance},#{avgRepayment},#{avgUseamount},#{availableQuota},#{creditBank},#{numberEnquiries},#{numberInstitutional},#{overdueSituation},#{abnormalSituation},#{otherLiabilities},#{totalOfCredit})  
+		</insert>
+
+		<!-- 查询所有借款/担保个人征信信息Page params：ids-->
+		<select id="pageByIds" resultType="com.yjcaifu.modules.generator.entity.CusCreditInformationEntity">
+			SELECT a.*,b.realname from cus_credit_information a left join cus_personal_info b on a.ref_id=b.id where 1=1 
+			<if test="ids != null ">
+				<foreach collection="ids"  open=" and a.ref_id in(" close=")" item="id" separator=",">
+            		#{id}
+        		</foreach>
+			</if>
+			ORDER BY a.report desc
+		</select>
+		
+		<!-- 查询所有借款/担保个人征信信息List。 params：ids-->
+		<select id="listByIds" resultType="com.yjcaifu.modules.generator.entity.CusCreditInformationEntity">
+			SELECT a.*,b.realname from cus_credit_information a left join cus_personal_info b on a.ref_id=b.id where 1=1 
+			<if test="ids != null ">
+				<foreach collection="ids"  open=" and a.id in(" close=")" item="id" separator=",">
+            		#{id}
+        		</foreach>
+			</if>
+		</select>
+		
+		<!-- 查询所有借款/担保企业征信信息List。 params：entIds-->
+		<select id="queryListByPerIds" resultType="Integer">
+			SELECT a.id from cus_credit_information a inner join cus_personal_info b on a.ref_id=b.id where 
+				<foreach collection="list"  open=" b.id in(" close=")" item="ids" separator=",">
+            		#{ids}
+        		</foreach>
+		</select>
+</mapper>

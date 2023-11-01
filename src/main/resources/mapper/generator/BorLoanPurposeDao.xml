@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.BorLoanPurposeDao">
+
+	
+		<!-- 查询借款用途:params:进件id -->
+		<select id="queryListById" resultType="com.yjcaifu.modules.generator.entity.BorLoanPurposeEntity">
+			select a.*,DATE_FORMAT(a.signing_time,"%Y-%m-%d") as signingTimeStr 
+			from bor_loan_purpose a
+			where a.ref_id=#{refId} 
+		</select>
+		
+		<!-- 批量删除借款用途（para：进件ID）-->
+		<delete id="deleteBatchByRefIds" >
+        	delete from bor_loan_purpose  where 
+				<foreach collection="list"  open=" ref_id in(" close=")" item="refIds" separator=",">
+            		#{refIds}
+        		</foreach>
+   		</delete>
+</mapper>

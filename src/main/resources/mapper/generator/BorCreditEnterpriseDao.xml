@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.BorCreditEnterpriseDao">
+
+
+		<!-- 查询企业征信信息（para：进件id）-->
+		<select id="queryByRefId" resultType="com.yjcaifu.modules.generator.entity.BorCreditEnterpriseEntity">
+			select * from bor_credit_enterprise a  where 1=1 and a.ref_id = #{refId} 
+		</select>
+		
+		<!-- 批量删除企业征信信息 para 进件管理id-->
+		<delete id="deleteBorCreditByRefId" >
+        	delete from bor_credit_enterprise where ref_id = #{refId} 
+   		 </delete>
+   		 
+   		<!-- 批量删除企业征信信息 para：个人征信id-->
+		<delete id="deleteByCreditId" >
+        	delete from bor_credit_enterprise where credit_id in  
+        	<foreach collection="list"  open="(" close=")" item="ids" separator=",">
+            		#{ids}
+        	</foreach>
+   		 </delete>
+   		 
+   		 <!-- 批量删除企业征信信息 para：个人征信id-->
+		<delete id="deleteByRefIds" >
+        	delete from bor_credit_enterprise where ref_id in  
+        	<foreach collection="list"  open="(" close=")" item="refIds" separator=",">
+            		#{refIds}
+        	</foreach>
+   		 </delete>
+</mapper>

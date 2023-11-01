@@ -1,0 +1,429 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.RdBorrowTenderDao">
+		
+		<!-- 查询图表日增总有效数 -->
+		<select id="rzzyxs" resultType="com.yjcaifu.modules.generator.entity.RdBorrowTenderEntity">
+			 <!-- SELECT count(time) as shuliang,time as shijian from (
+				SELECT * from 
+					(SELECT user_id,substring(add_time,1,10) as time from rd_borrow_tender 
+					union all
+					SELECT user_id,substring(add_time,1,10) as time from rd_additional_exp ) t  
+				GROUP BY user_id ORDER BY time ) s where 1=1 
+				<if test="time !=null and id !=''">
+				and date(time) &gt; DATE_SUB('${time}', INTERVAL 5 DAY) and time &lt;='${time}'
+				</if>
+			GROUP BY time  -->
+			
+			SELECT sum(shuliang) as rzzyxs,time from (
+
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 4 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 3 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 2 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 1 DAY) as time UNION all
+				SELECT 0 as shuliang,  '${time}' as time UNION all
+
+				SELECT count(time) as shuliang,time
+				from (
+					SELECT * from 
+						(SELECT user_id,substring(add_time,1,10) as time from rd_borrow_tender where user_id not in (SELECT DISTINCT user_id from rd_additional_exp)
+						union all
+						SELECT user_id,substring(use_time,1,10) as time from rd_additional_exp where `status` in ('1','2')) t  
+					GROUP BY user_id ORDER BY time ) s where 1=1 
+				 
+					and date(time) &gt; DATE_SUB('${time}', INTERVAL 5 DAY) and time &lt;= '${time}'
+				GROUP BY  time 
+			) ppp GROUP BY time
+		</select>
+		
+		<!-- 查询图表 累计有效数-->
+		<select id="ljyxs" resultType="com.yjcaifu.modules.generator.entity.RdBorrowTenderEntity">
+			SELECT count(time) as ljyxs,time
+				from (
+					SELECT * from 
+						(SELECT user_id,substring(add_time,1,10) as time from rd_borrow_tender 
+						union all
+						SELECT user_id,substring(add_time,1,10) as time from rd_additional_exp ) t  
+							GROUP BY user_id ORDER BY time DESC) s where 1=1 and time &lt;= DATE_SUB('${time}', INTERVAL 4 DAY)
+			UNION ALL
+			SELECT count(time) as ljyxs,time
+			from (
+				SELECT * from 
+					(SELECT user_id,substring(add_time,1,10) as time from rd_borrow_tender 
+					union all
+					SELECT user_id,substring(add_time,1,10) as time from rd_additional_exp ) t  
+				GROUP BY user_id ORDER BY time DESC) s where 1=1 and time &lt;=DATE_SUB('${time}', INTERVAL 3 DAY)
+			UNION ALL
+			SELECT count(time) as ljyxs,time
+			from (
+				SELECT * from 
+					(SELECT user_id,substring(add_time,1,10) as time from rd_borrow_tender 
+					union all
+					SELECT user_id,substring(add_time,1,10) as time from rd_additional_exp ) t  
+				GROUP BY user_id ORDER BY time DESC) s where 1=1   and time &lt;=DATE_SUB('${time}', INTERVAL 2 DAY)
+			UNION ALL
+			SELECT count(time) as ljyxs,time
+			from (
+				SELECT * from 
+					(SELECT user_id,substring(add_time,1,10) as time from rd_borrow_tender 
+					union all
+					SELECT user_id,substring(add_time,1,10) as time from rd_additional_exp ) t  
+				GROUP BY user_id ORDER BY time DESC) s where 1=1  and time &lt;=DATE_SUB('${time}', INTERVAL 1 DAY)
+			UNION ALL
+			SELECT count(time) as ljyxs,time
+			from (
+				SELECT * from 
+					(SELECT user_id,substring(add_time,1,10) as time from rd_borrow_tender 
+					union all
+					SELECT user_id,substring(add_time,1,10) as time from rd_additional_exp ) t  
+				GROUP BY user_id ORDER BY time DESC) s where 1=1  and time &lt;='${time}'
+		</select>
+
+		<!-- 查询图表日新增注册数 -->
+		<select id="rxzzcs" resultType="com.yjcaifu.modules.generator.entity.RdBorrowTenderEntity">
+			
+			SELECT sum(shuliang) as rxzzcs,time from (
+			SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 4 DAY) as time UNION all
+			SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 3 DAY) as time UNION all
+			SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 2 DAY) as time UNION all
+			SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 1 DAY) as time UNION all
+			SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 0 DAY) as time UNION all
+			
+			SELECT count,time from (
+			SELECT count(*) as count , substring(add_time,1,10) as time from rd_user 
+			 GROUP BY substring(add_time,1,10) ) t 
+			where 1=1 and date(time) &gt; DATE_SUB('${time}', INTERVAL 5 DAY) and time &lt;='${time}' )tt GROUP BY time
+		</select>
+		
+		<!-- 查询图表江西日增有效 -->
+		<select id="jxrzyx" resultType="com.yjcaifu.modules.generator.entity.RdBorrowTenderEntity">
+		SELECT sum(shuliang) as jxrzyx,time from (
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 4 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 3 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 2 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 1 DAY) as time UNION all
+				SELECT 0 as shuliang,  '${time}' as time UNION all
+				SELECT count(time) as shuliang,time
+				from (
+					SELECT * from 
+						(SELECT user_id,substring(add_time,1,10) as time from rd_borrow_tender where user_id not in (SELECT DISTINCT user_id from rd_additional_exp)
+						union all
+						SELECT user_id,substring(use_time,1,10) as time from rd_additional_exp where `status` in ('1','2')) t  
+					GROUP BY user_id ORDER BY time ) s 
+				INNER JOIN rd_user b on b.user_id=s.user_id
+				where 1=1 and b.jiangxi_province_flag='1' and date(time) &gt; DATE_SUB('${time}', INTERVAL 5 DAY) and time &lt;='${time}'
+				GROUP BY  time 
+			) ppp GROUP BY time
+		</select>
+		
+		<!-- 查询签到登录数 -->
+		<select id="qddls" resultType="com.yjcaifu.modules.generator.entity.RdBorrowTenderEntity">
+			SELECT sum(shuliang) as qddls,time from (SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 4 DAY) as time UNION all
+			SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 3 DAY) as time UNION all
+			SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 2 DAY) as time UNION all
+			SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 1 DAY) as time UNION all
+			SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 0 DAY) as time UNION all
+
+			SELECT count(user_id) as count,time from (
+				SELECT  * from 
+				(
+				SELECT  user_id,substring(add_time,1,10) as time from rd_score_log ) t where 1=1 
+				and date(time) &gt; DATE_SUB('${time}', INTERVAL 5 DAY) and time &lt;='${time}'
+			 ) a GROUP BY time ORDER BY time ) ttt GROUP BY time
+		</select>
+		
+		<!-- 查询提现充值投标数 -->
+		<select id="txcztbs" resultType="com.yjcaifu.modules.generator.entity.RdBorrowTenderEntity">
+			SELECT sum(shuliang) as txcztbs,time from (
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 4 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 3 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 2 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 1 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 0 DAY) as time UNION all
+				SELECT count(user_id) as tount,time from (SELECT DISTINCT * from 
+				(SELECT DISTINCT user_id,substring(add_time,1,10) as time from rd_borrow_tender 
+				union all
+				SELECT DISTINCT user_id,substring(add_time,1,10) as time from rd_additional_exp 
+				union all
+				SELECT DISTINCT user_id,substring(add_time,1,10) as time from rd_account_recharge where `status`='1'
+				union all
+				SELECT DISTINCT user_id,substring(add_time,1,10) as time from rd_account_cash where `status`='1' ) t )tt where 1=1 
+				and date(time) &gt; DATE_SUB('${time}', INTERVAL 5 DAY) and time &lt;='${time}' GROUP BY time) 
+				tttt GROUP BY time
+		</select>
+		
+		<!-- 查询日充值 -->
+		<select id="rcz" resultType="com.yjcaifu.modules.generator.entity.RdBorrowTenderEntity">
+			SELECT sum(shuliang) as rcz,time from (
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 4 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 3 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 2 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 1 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 0 DAY) as time UNION all
+				SELECT * from (
+					SELECT sum(money)/10000 as count,time  from (
+						SELECT substring(a.add_time,1,10) as time,a.money,c.invite_user from rd_account_recharge a
+						INNER JOIN rd_user b on a.user_id=b.user_id
+						LEFT JOIN rd_user_invite c on b.user_id=c.user_id
+						where 1=1 and a.`status`='1' 
+						ORDER BY substring(a.add_time,1,10) DESC 
+					) t where invite_user !=888 or invite_user is NULL GROUP BY time ORDER BY time DESC
+				) w where 1=1 and date(time) &gt; DATE_SUB('${time}', INTERVAL 5 DAY) and time &lt;='${time}' GROUP BY time 
+			) tt GROUP BY time
+
+		</select>
+		
+		<!-- 查询日提现 -->
+		<select id="rtx" resultType="com.yjcaifu.modules.generator.entity.RdBorrowTenderEntity">
+			SELECT sum(shuliang) as rtx,time from (
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 4 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 3 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 2 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 1 DAY) as time UNION all
+				SELECT 0 as shuliang,  DATE_SUB('${time}', INTERVAL 0 DAY) as time UNION all
+				SELECT ROUND(count,2),time from (
+					SELECT sum(a.money)/10000 as count,substring(a.add_time,1,10) as time from rd_account_cash  a 
+					INNER JOIN rd_user b on a.user_id=b.user_id
+					LEFT JOIN rd_user_invite c on b.user_id=c.user_id
+					where 1=1 and a.`status`='1' and c.invite_user !=888 or c.invite_user is NULL
+					GROUP BY substring(a.add_time,1,10) ORDER BY substring(a.add_time,1,10) DESC
+					) t where 1=1
+					and date(time) &gt; DATE_SUB('${time}', INTERVAL 5 DAY) and time &lt;='${time}' GROUP BY time
+				) tt GROUP BY time
+		</select>
+		
+		<!-- 当日充值明细 -->
+		<select id="drczmx" resultType="com.yjcaifu.modules.generator.entity.RdBorrowTenderEntity">
+			SELECT name,tjr,czdate,czmoney from ( 
+				SELECT t.real_name as name,a.real_name as tjr,concat('￥',round(sum(t.money),2)) as czmoney,t.add_time as czdate,
+				t.invite_user from( 
+					SELECT a.money,c.real_name,DATE_FORMAT(a.add_time,'%c月%e日')as add_time,a.user_id,b.invite_user 
+						from rd_account_recharge a 
+						INNER JOIN rd_user c on a.user_id=c.user_id 
+						LEFT JOIN rd_user_invite b on c.user_id=b.user_id 
+						where substring(a.add_time,1,10)='${time}' and a.`status`='1' 
+				) t 
+				LEFT JOIN rd_user a on t.invite_user=a.user_id 
+			where t.invite_user != '888' or t.invite_user is null GROUP BY name
+			) tt
+		</select>
+		
+		<!-- 当日提现明细及原因分析 -->
+		<select id="drtx" resultType="com.yjcaifu.modules.generator.entity.RdBorrowTenderEntity">
+			SELECT tt.txname,tt.txtjr,tt.txmoney,tt.zzr,tt.user_id,re.cash_reason,re.id as reasonidInteger from (
+				SELECT t.real_name as txname,a.real_name as txtjr,concat('￥',round(t.money,2)) as txmoney,invite_user,'' as zzr,t.user_id from(
+							SELECT a.money,c.real_name,DATE_FORMAT(a.add_time,'%c月%e日')as add_time,a.user_id,b.invite_user from rd_account_cash a 
+							INNER JOIN rd_user c on a.user_id=c.user_id 
+							LEFT JOIN rd_user_invite b on a.user_id=b.user_id
+							where substring(a.add_time,1,10)='${time}'  and a.`status`='1' 
+							 GROUP BY a.user_id) t 
+				LEFT JOIN rd_user a on t.invite_user=a.user_id 
+				where t.invite_user != '888' or t.invite_user is null 
+			) tt 
+			 LEFT JOIN rd_account_cash_reason_report re on re.user_id=tt.user_id and  substring(re.cash_time,1,10)='${time}' 
+		</select>
+		
+		<!-- 近10日充值及投标分析 -->
+		<select id="tencztbfx" resultType="com.yjcaifu.modules.generator.entity.RdBorrowTenderEntity">
+			<!-- SELECT t.real_name as name,f.real_name as tjr,DATE_FORMAT(e.add_time,'%c月%e日') as tenczdate,
+			concat('￥',round(e.cz,2)) as tenczmoney,
+			case when tb.add_time is null then  '未投' ELSE DATE_FORMAT(tb.add_time,'%c月%e日') end as tbdate,'' as zzr
+			from (
+				SELECT sum(a.money) as cz,a.user_id,b.real_name,a.add_time,c.invite_user from rd_account_recharge a 
+				INNER JOIN rd_user b on a.user_id=b.user_id
+				LEFT JOIN rd_user_invite c on c.user_id=a.user_id 
+				where date_sub('${time}', INTERVAL 10 DAY) &lt;= date(a.add_time) GROUP BY a.user_id
+			)t LEFT JOIN rd_user f on t.invite_user=f.user_id
+			INNER JOIN (
+				SELECT sum(money) as cz,user_id,add_time from rd_account_recharge 
+				where date_sub('${time}', INTERVAL 10 DAY) &lt;= date(`add_time`) GROUP BY user_id
+			) e on e.user_id=t.user_id 
+			LEFT JOIN (
+				SELECT sum(money) as tb,user_id,add_time from rd_borrow_tender 
+				where date_sub('${time}', INTERVAL 10 DAY) &lt;= date(`add_time`) GROUP BY user_id
+			) tb on tb.user_id=t.user_id -->
+			SELECT name,tjr,tenczdate,tenczmoney,tbdate,zzr from (
+				SELECT t.real_name as name,f.real_name as tjr,DATE_FORMAT(t.add_time,'%c月%e日') as tenczdate,
+					concat('￥',round(t.cz,2)) as tenczmoney,	concat('￥',round(tb.tb,2)) as tentbmoney,t.invite_user,
+					case when tb.add_time is null then  '未投' ELSE DATE_FORMAT(tb.add_time,'%c月%e日') end as tbdate,'' as zzr
+					from (
+						SELECT sum(a.money) as cz,a.user_id,b.real_name,a.add_time,c.invite_user from rd_account_recharge a 
+						INNER JOIN rd_user b on a.user_id=b.user_id
+						LEFT JOIN rd_user_invite c on c.user_id=a.user_id 
+						where date_sub('${time}', INTERVAL 10 DAY) &lt;= date(a.add_time) GROUP BY a.user_id
+					)t LEFT JOIN rd_user f on t.invite_user=f.user_id
+					LEFT JOIN (
+						SELECT sum(money) as tb,user_id,add_time from rd_borrow_tender 
+						where date_sub('${time}', INTERVAL 10 DAY) &lt;= date(`add_time`) GROUP BY user_id
+					) tb on tb.user_id=t.user_id where t.cz>tb.tb or tb.tb is null ORDER BY t.add_time DESC 
+				) w where invite_user !=888 or invite_user is NULL
+		</select>
+		
+		<!-- 可用余额+待收利息+待收本金=账户总额 -->
+		<!-- <select id="zhze" resultType="com.yjcaifu.modules.generator.entity.RdBorrowTenderEntity">
+			SELECT atime,round(kyye/10000,2) as kyye,round(dslx/10000,2) as dslx,round(dsbj/10000,2) as dsbj, 
+			round((kyye+dsbj+dslx)/10000,2) as zhze from ( 
+				SELECT CURDATE()as atime,kyye,dslx,dsbj,kyye+dsbj+dslx as zhze from ( 
+					SELECT sum(t1.use_money) AS kyye FROM (
+						SELECT ta.use_money,ta.user_id FROM rd_account ta WHERE ta.user_id != 1 and ta.use_money>0 ) t1 
+					LEFT JOIN 
+						(SELECT user_id FROM rd_user_invite WHERE invite_user = 888 ) t2 ON t1.user_id = t2.user_id WHERE t2.user_id IS NULL ) t,
+					(SELECT SUM(bc.capital) AS dsbj,SUM(bc.interest) as dslx FROM rd_borrow_collection AS bc 
+					WHERE bc. STATUS = 0 AND 
+					bc.borrow_id IN ( SELECT id FROM rd_borrow AS b WHERE ( ( b. STATUS IN (6, 7, 8) AND b.type != 110 ) OR (b.type = 110) ) ))tt
+				UNION ALL
+				(SELECT DATE(add_time) as atime,yj_service_exp_money_use as kyye,yj_service_exp_money_collection_interest as dslx,
+					yj_service_exp_money_collection_capital as dsbj,
+					yj_service_exp_money_use+yj_service_exp_money_collection_interest+yj_service_exp_money_collection_capital as zhze
+				from rd_xp_operational_data ORDER BY add_time )   ) qqqq
+			where date_sub('${time}', INTERVAL 5 DAY) &lt; date(`atime`) and atime &lt;='${time}' ORDER BY atime desc
+
+		</select> -->
+		
+		<!-- 可用余额+待收利息（VIP加息）+待收本金=账户总额 -->
+		<select id="zhze" resultType="com.yjcaifu.modules.generator.entity.RdBorrowTenderEntity">
+		<!-- 	SELECT atime,round(kyye/10000,2) as kyye,round(dslx/10000,2) as dslx,round(dsbj/10000,2) as dsbj, 
+			round((kyye+dsbj+dslx)/10000,2) as zhze from ( 
+				SELECT CURDATE()as atime,kyye,dslx,dsbj,kyye+dsbj+dslx as zhze from ( 
+					SELECT sum(t1.use_money) AS kyye FROM (
+						SELECT ta.use_money,ta.user_id FROM rd_account ta WHERE ta.user_id != 1 and ta.use_money>0 ) t1 
+					LEFT JOIN 
+						(SELECT user_id FROM rd_user_invite WHERE invite_user = 888 ) t2 ON t1.user_id = t2.user_id WHERE t2.user_id IS NULL ) t,
+					(SELECT SUM(bc.capital) AS dsbj,SUM(bc.interest) as dslx FROM rd_borrow_collection AS bc 
+					WHERE bc. STATUS = 0 AND 
+					bc.borrow_id IN ( SELECT id FROM rd_borrow AS b WHERE ( ( b. STATUS IN (6, 7, 8) AND b.type != 110 ) OR (b.type = 110) ) ))tt
+				UNION ALL
+				(SELECT DATE(add_time) as atime,yj_service_exp_money_use as kyye,yj_service_exp_money_collection_interest as dslx,
+					yj_service_exp_money_collection_capital as dsbj,
+					yj_service_exp_money_use+yj_service_exp_money_collection_interest+yj_service_exp_money_collection_capital as zhze
+				from rd_xp_operational_data ORDER BY add_time )   ) qqqq
+			where date_sub('${time}', INTERVAL 5 DAY) &lt; date(`atime`) and atime &lt;='${time}' ORDER BY atime desc -->
+			
+			SELECT atime,sum(kyye) as kyye,sum(dslx) as dslx,sum(dsbj) as dsbj,sum(zhze) as zhze from (
+				SELECT  DATE_SUB('${time}', INTERVAL 4 DAY) as atime,0 as kyye,0 as dslx,0 as dsbj,0 as zhze UNION all
+				SELECT  DATE_SUB('${time}', INTERVAL 3 DAY) as atime,0 as kyye,0 as dslx,0 as dsbj,0 as zhze UNION all
+				SELECT  DATE_SUB('${time}', INTERVAL 2 DAY) as atime,0 as kyye,0 as dslx,0 as dsbj,0 as zhze UNION all
+				SELECT  DATE_SUB('${time}', INTERVAL 1 DAY) as atime,0 as kyye,0 as dslx,0 as dsbj,0 as zhze UNION all
+				SELECT  DATE_SUB('${time}', INTERVAL 0 DAY) as atime,0 as kyye,0 as dslx,0 as dsbj,0 as zhze UNION all
+				SELECT atime,round(kyye/10000,2) as kyye,round(dslx/10000,2) as dslx,round(dsbj/10000,2) as dsbj, 
+					round((kyye+dsbj+dslx)/10000,2) as zhze from ( 
+						SELECT CURDATE()as atime,kyye,dslx+vip as dslx,dsbj,kyye+dsbj+dslx as zhze from ( 
+							SELECT sum(t1.use_money) AS kyye FROM (
+								SELECT ta.use_money,ta.user_id FROM rd_account ta WHERE ta.user_id != 1 and ta.use_money>0 ) t1 
+							LEFT JOIN 
+								(SELECT user_id FROM rd_user_invite WHERE invite_user = 888 ) t2 ON t1.user_id = t2.user_id 
+									WHERE t2.user_id IS NULL ) t,
+								(SELECT sum(repay_interest) as vip FROM rd_user_vip_uprate_collection where status=0) v,
+							(SELECT SUM(bc.capital) AS dsbj,SUM(bc.interest) as dslx FROM rd_borrow_collection AS bc 
+							WHERE bc. STATUS = 0 AND 
+							bc.borrow_id IN ( SELECT id FROM rd_borrow AS b WHERE ( ( b. STATUS IN (6, 7, 8) AND b.type != 110 ) 
+								OR (b.type = 110) ) ))tt
+					UNION ALL
+						(SELECT DATE(add_time) as atime,yj_service_exp_money_use as kyye,
+							yj_service_exp_money_collection_interest + yj_service_exp_money_collection_interest_vip as dslx,
+							yj_service_exp_money_collection_capital as dsbj,
+							yj_service_exp_money_use+yj_service_exp_money_collection_interest+yj_service_exp_money_collection_capital as zhze
+						from rd_xp_operational_data ORDER BY add_time )   ) qqqq
+					where date_sub('${time}', INTERVAL 5 DAY) &lt; date(`atime`) and atime &lt;='${time}' ORDER BY atime desc
+				) tt GROUP BY atime
+		</select>
+		
+		<!-- 当日发标额VS当日还款额VS当日可用总额                                           可选日期 -->
+		<!-- <select id="drfbhk" resultType="com.yjcaifu.modules.generator.entity.RdBorrowTenderEntity">
+			SELECT time,sum(drfbe) as drfbe,sum(drhke) as drhke,sum(drkyze) as drkyze from (
+				select time,sum(drfbe) as drfbe,sum(drhke) as drhke,0 as drkyze from (
+					SELECT time ,drfbe, 0 as drhke from (
+						(select time , drfbe from (
+							SELECT substring(add_time,1,10) as time ,round(sum(money)/10000,2) as drfbe from rd_borrow_tender 
+							GROUP BY substring(add_time,1,10) ORDER BY substring(add_time,1,10) DESC
+							) fb where date(time) = DATE_SUB('${time}',INTERVAL 1 DAY) )
+						union all 
+							(select substring(repay_date,1,10) as time,round(sum(money)/10000,2) as wldrfbe from rd_borrow_plan 
+							where repay_date between DATE_SUB('${time}',INTERVAL -1 DAY) and ADDDATE('${time}',INTERVAL 3 DAY) 
+							GROUP BY repay_date ORDER BY repay_date DESC)
+						) a
+					union all 
+					(SELECT time, 0 as drfbe,drhke from (
+						(select time , drhke from (
+						SELECT substring(repayment_yes_time,1,10) as time, round(sum(capital)/10000,2) as drhke from rd_borrow_repayment 
+						GROUP BY substring(repayment_yes_time,1,10) 
+						) hk where date(time) &gt;=DATE_SUB('${time}',INTERVAL 1 DAY) and time&lt;='${time}' ORDER BY time ) 
+						union all
+						(select substring(repayment_time,1,10) as time,round(sum(repayment_account)/10000,2) as wldrhke from rd_borrow_repayment 
+						where repayment_time between DATE_SUB('${time}',INTERVAL 0 DAY) and ADDDATE('${time}',INTERVAL 3 DAY) 
+						GROUP BY repayment_time ORDER BY repayment_time DESC)
+					) b )
+				) t GROUP BY time 
+				union all 
+				SELECT time, 0 as drfbe,0 as drhke,drkyze from (
+					(SELECT substring(add_time,1,10) as time,round(sum(yj_service_exp_money_use)/10000,2) as drkyze FROM `rd_xp_operational_data`
+					where date(add_time) &gt;=DATE_SUB('${time}',INTERVAL 1 DAY) and add_time&lt;='${time}' ORDER BY add_time DESC )
+					union all 
+					(SELECT CURDATE() as time ,round(sum(t1.use_money)/10000,2) AS drkyze FROM ( 
+						SELECT ta.use_money,ta.user_id FROM rd_account ta WHERE ta.user_id != 1 and ta.use_money&gt;0 ) t1 
+					LEFT JOIN ( SELECT user_id FROM rd_user_invite WHERE invite_user = 888 ) t2 ON t1.user_id = t2.user_id WHERE t2.user_id IS NULL )
+				) ze
+			) t GROUP BY time 
+
+		</select> -->
+		
+		<!-- 当日发标额VS当日还款额VS当日可用总额                                            不可选日期-->
+		<select id="drfbhk" resultType="com.yjcaifu.modules.generator.entity.RdBorrowTenderEntity">
+			SELECT time,sum(drfbe) as drfbe,sum(drhke) as drhke,sum(drkyze) as drkyze from (
+				select time,sum(drfbe) as drfbe,sum(drhke) as drhke,0 as drkyze from (
+					SELECT time ,drfbe, 0 as drhke from (
+						(select time , drfbe from (
+							SELECT substring(add_time,1,10) as time ,round(sum(money)/10000,2) as drfbe from rd_borrow_tender 
+							GROUP BY substring(add_time,1,10) ORDER BY substring(add_time,1,10) DESC
+							) fb where date(time) = DATE_SUB(CURDATE(),INTERVAL 1 DAY) )
+						union all 
+							(select substring(repay_date,1,10) as time,round(sum(money)/10000,2) as wldrfbe from rd_borrow_plan 
+							where repay_date between DATE_SUB(CURDATE(),INTERVAL -1 DAY) and ADDDATE(CURDATE(),INTERVAL 3 DAY) 
+							GROUP BY repay_date ORDER BY repay_date DESC)
+						) a
+					union all 
+					(SELECT time, 0 as drfbe,drhke from (
+						(select time , drhke from (
+						SELECT substring(repayment_yes_time,1,10) as time, round(sum(capital)/10000,2) as drhke from rd_borrow_repayment 
+						GROUP BY substring(repayment_yes_time,1,10) 
+						) hk where date(time) &gt;=DATE_SUB(CURDATE(),INTERVAL 1 DAY) and time&lt;=CURDATE() ORDER BY time ) 
+						union all
+						(select substring(repayment_time,1,10) as time,round(sum(repayment_account)/10000,2) as wldrhke from rd_borrow_repayment 
+						where repayment_time between DATE_SUB(CURDATE(),INTERVAL 0 DAY) and ADDDATE(CURDATE(),INTERVAL 3 DAY) 
+						GROUP BY repayment_time ORDER BY repayment_time DESC)
+					) b )
+				) t GROUP BY time 
+				union all 
+				SELECT time, 0 as drfbe,0 as drhke,drkyze from (
+					(SELECT DATE_SUB(CURDATE(),INTERVAL 1 DAY) as time,round(sum(yj_service_exp_money_use)/10000,2) as drkyze FROM `rd_xp_operational_data`
+					where date(add_time) &gt;=DATE_SUB(CURDATE(),INTERVAL 1 DAY) and add_time&lt;=CURDATE() ORDER BY add_time DESC )
+					union all 
+					(SELECT CURDATE() as time ,round(sum(t1.use_money)/10000,2) AS drkyze FROM ( 
+						SELECT ta.use_money,ta.user_id FROM rd_account ta WHERE ta.user_id != 1 and ta.use_money&gt;0 ) t1 
+					LEFT JOIN ( SELECT user_id FROM rd_user_invite WHERE invite_user = 888 ) t2 ON t1.user_id = t2.user_id WHERE t2.user_id IS NULL )
+				) ze
+			) t GROUP BY time 
+
+		</select>
+		
+		<!-- 累计成交金额-->
+		<select id="ljcjje" resultType="com.yjcaifu.modules.generator.entity.RdBorrowTenderEntity">
+			SELECT round((SUM(account) + 144540000)/10000,2) as ljcjje FROM rd_borrow WHERE status in (6,7,8) AND id >641 AND user_id NOT IN (1758, 112,3452)
+		</select>
+		
+		<!-- 根据标的号名称bidnoname查询标的信息 -->
+		<select id="selectBybidnoname" resultType="com.yjcaifu.modules.generator.entity.RdBorrowEntity">
+			SELECT 
+				id,name,review_time,account
+			FROM 
+				rd_borrow
+			WHERE 1=1 
+				<if test="bidnoname != null and bidnoname !='' ">
+					and name like concat('%',#{bidnoname},'%')
+				</if>
+				<if test="bidnoNameSel != null and bidnoNameSel !='' ">
+					and name = #{bidnoNameSel}
+				</if>
+		</select>
+</mapper>

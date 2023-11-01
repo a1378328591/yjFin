@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.RdUserDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.yjcaifu.modules.generator.entity.RdUserEntity" id="rdUserMap">
+        <result property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="cardId" column="card_id"/>
+        <result property="mobilePhone" column="mobile_phone"/>
+        <result property="maritalStatus" column="marital_status"/>
+        <result property="familyStructure" column="family_structure"/>
+        <result property="relation" column="relation"/>
+        <result property="workunitOrMonthlyincome" column="workunit_or_monthlyincome"/>
+        <result property="enterpriseName" column="enterprise_name"/>
+        <result property="legalPerson" column="legal_person"/>
+        <result property="companyType" column="company_type"/>
+        <result property="ownershipStructure" column="ownership_structure"/>
+        <result property="registrationTime" column="registration_time"/>
+        <result property="registeredCapital" column="registered_capital"/>
+        <result property="businessScope" column="business_scope"/>
+        <result property="domicile" column="domicile"/>
+        <result property="officeSpace" column="office_space"/>
+        <result property="personalOrEnterprise" column="personal_or_Enterprise"/>
+        <result property="borrowerOrVenture" column="borrower_or_Venture"/>
+    </resultMap>
+
+
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.ApplicationRequirementsLogDao">
+
+	<select id="selectAll" resultType="com.yjcaifu.modules.generator.entity.ApplicationRequirementsLogEntity">
+			SELECT 
+				*
+			FROM 
+				application_requirements_log
+			ORDER BY id
+		</select>
+
+
+	<select id="selectByxqId" resultType="com.yjcaifu.modules.generator.entity.ApplicationRequirementsLogEntity">
+			SELECT 
+				*
+			FROM 
+				application_requirements_log
+			WHERE
+				xq_id = #{xqId}
+		</select>
+		
+		<delete id="deleteAllByXqId" >
+			delete from application_requirements_log where xq_id=#{xqId}
+   		 </delete>
+
+</mapper>

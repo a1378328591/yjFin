@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.BorrowingInformationDao">
+
+
+	<!-- 查询还款方式 -->
+	<select id="findReimbursementType" resultType="com.yjcaifu.modules.generator.entity.ReimbursementType">
+		select id,type from reimbursement_type
+	</select>
+	
+	<!-- 根据userId查询用户信息 -->
+		<select id="selectById" resultType="com.yjcaifu.modules.generator.entity.BorrowingInformationEntity">
+			SELECT 
+				a.*,c.type as reimburseName
+			FROM 
+				borrowing_information a
+			left join reimbursement_type c on a.reimbursement_means=c.id
+			WHERE
+				a.id = #{id}	
+		</select>
+	
+	
+	<!-- 借款信息Page -->
+	<select id="queryPage" resultType="com.yjcaifu.modules.generator.entity.BorrowingInformationEntity">
+		select a.*,b.realname,c.type as reimburseName,left(a.apply_time, 10) as applyTimestrDate from borrowing_information a INNER JOIN cus_personal_info b on a.ref_id=b.id left join reimbursement_type c on a.reimbursement_means=c.id where 1=1
+		<if test="key != null and key !='' ">
+				and b.realname like concat(#{key},'%') 
+		</if>
+		<if test="time != null and time !='' ">
+				and a.apply_time like concat(#{time},'%') 
+		</if>
+		order by id desc
+	</select>
+
+ 		<!-- 查询个人名下所有进件信息params：entIds-->
+		<select id="queryListByPerIds" resultType="Integer">
+			select a.id
+			from 
+				borrowing_information a inner join cus_personal_info b on a.ref_id=b.id where 
+				<foreach collection="list"  open=" b.id in(" close=")" item="perIds" separator=",">
+            		#{perIds}
+        		</foreach>
+		</select>
+		<!-- 查询当前月有哪些进件List（params：firstDay，lastDay） -->
+	<select id="queryCurrentMonthIntoManage" resultType="com.yjcaifu.modules.generator.entity.BorrowingInformationEntity">
+		select a.*  from borrowing_information a inner join cus_personal_info b on a.ref_id=b.id INNER JOIN bid_no c on a.id=c.ref_id
+		where c.review_time &gt;= #{firstDay} and c.review_time &lt;= #{lastDay}
+		group by a.id
+	</select>
+	<!-- 查询当前月有哪些标的List（params：firstDay，lastDay） -->
+	<select id="queryCurrentMonthBidNo" resultType="com.yjcaifu.modules.generator.entity.BorrowingInformationEntity">
+		select a.id,a.ratify_money,a.risk_fund,b.emp_id,sum(IFNULL(c.is_end,0)) as is_end,sum(IFNULL(c.refinance,0)) as refinance  from borrowing_information a inner join cus_personal_info b on a.ref_id=b.id INNER JOIN bid_no c on a.id=c.ref_id
+		where c.review_time &gt;= #{firstDay} and c.review_time &lt;= #{lastDay}
+		group by a.id,a.ratify_money,a.risk_fund,b.emp_id
+		order by a.id  asc
+	</select>
+		
+</mapper>

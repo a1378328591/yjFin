@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.BidNoDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.yjcaifu.modules.generator.entity.BidNoEntity" id="bidNoMap">
+        <result property="id" column="id"/>
+        <result property="status" column="status"/>
+        <result property="name" column="name"/>
+        <result property="borrowerType" column="borrower_type"/>
+        <result property="borrowerName" column="borrower_name"/>
+        <result property="borrowerId" column="borrower_id"/>
+        <result property="account" column="account"/>
+        <result property="timeLimit" column="time_limit"/>
+        <result property="borrowType" column="borrow_type"/>
+        <result property="repaymentType" column="repayment_type"/>
+        <result property="warrantType" column="warrant_type"/>
+        <result property="apr" column="apr"/>
+        <result property="addTime" column="add_time"/>
+        <result property="reviewTime" column="review_time"/>
+        <result property="type" column="type"/>
+        <result property="refId" column="ref_id"/>
+    </resultMap>
+
+		<!-- 根据refId查询用户信息 -->
+		<select id="selectByRefId" resultType="com.yjcaifu.modules.generator.entity.BidNoEntity">
+			SELECT 
+				*
+			FROM 
+				bid_no
+			WHERE
+				ref_id = #{refId}
+			ORDER BY refinance desc,review_time desc
+		</select>
+		
+		<!-- 根据标的号查询是否重复添加 -->
+		<select id="queryByName" resultType="com.yjcaifu.modules.generator.entity.BidNoEntity">
+			SELECT 
+				*
+			FROM 
+				bid_no
+			WHERE
+				name = #{name}
+		</select>
+		<!-- 批量删除企业贷款信息by 企业征信id-->
+		<delete id="deleteByRefId">
+        	delete from bid_no where ref_id = #{refId}
+   		 </delete>
+   		 
+   		 <!-- 根据标的号查询是否重复添加 -->
+		<select id="selectRefinance" resultType="BigDecimal">
+			select (sum(b.refinance)/COUNT(b.refinance)+sum(b.notrefinance)) as practicalRiskFund from (
+				SELECT case when a.refinance =0 then a.practical_risk_fund else NULL end as refinance,
+						case when a.refinance =1 then a.practical_risk_fund else 0 end as notrefinance 
+				from bid_no a
+				where ref_id=#{refId} 
+			) b
+		</select>
+		
+		<!-- 返回第一个非续贷标的风控金 -->
+		<select id="queryRiskFund" resultType="BigDecimal">
+			select practical_risk_fund from bid_no where ref_id =#{refId} and refinance = 0 limit 1
+		</select>
+   		 
+   		 
+</mapper>

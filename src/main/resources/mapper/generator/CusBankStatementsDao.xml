@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.CusBankStatementsDao">
+
+		<!-- 查询所有流水信息Page（para：姓名） -->
+		<select id="selectAll" resultType="com.yjcaifu.modules.generator.entity.CusBankStatementsEntity">
+			select a.*,b.realname from cus_bank_statements a INNER JOIN cus_personal_info b on a.ref_id=b.id where 1=1 
+			<if test="realname != null and realname !='' ">
+				and b.realname like concat('%',#{realname},'%') 
+			</if>
+		</select>
+		
+		<!-- 查询所有个人流水信息Page（para：refId） -->
+		<select id="listByPersonalId" resultType="com.yjcaifu.modules.generator.entity.CusBankStatementsEntity">
+			select a.* from cus_bank_statements a where 1=1 
+			<if test="refId != null and refId !='' ">
+				and a.ref_id like concat('%',#{refId},'%') 
+			</if>
+		</select>
+		
+		<!-- 查询所有房产信息List params：ids-->
+		<select id="queryByIds" resultType="com.yjcaifu.modules.generator.entity.CusBankStatementsEntity">
+			<if test="ids != null ">
+				<foreach collection="ids"  open=" select a.* from cus_bank_statements a where 1=1  and a.id in(" close=")" item="id" separator=",">
+            		#{id}
+        		</foreach>
+			</if>
+			
+		</select>
+		
+		
+		<!-- 查询所有银行流水信息List（para：refId）备注：银行流水信息不作为基础信息来填 -->
+		<select id="queryListByMainTableId" resultType="com.yjcaifu.modules.generator.entity.CusBankStatementsEntity">
+			select a.* from cus_bank_statements a where 1=1 and a.ref_id = #{bankStatementId}
+		</select>
+		
+		<!-- 批量删除流水明细信息-->
+		<delete id="deleteNotInIds" >
+			delete from cus_bank_statements where ref_id=#{refId}
+			<if test="cusbankIntegers != null ">
+	        	<foreach collection="cusbankIntegers" item="id"  open=" and id not in  (" separator="," close=")" >
+	            	#{id}
+	        	</foreach>
+			</if>
+   		 </delete>
+   		 
+   		 <!-- 批量删除流水明细信息param:银行流水主表id-->
+		<delete id="deleteBatchByBankSIds" >
+			delete from cus_bank_statements where 
+	        	<foreach collection="list" item="bankSIds"  open=" ref_id in  (" separator="," close=")" >
+	            	#{bankSIds}
+	        	</foreach>
+   		 </delete>
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.BorTaxRecordDao">
+
+		<select id="queryListByTaxCondId" resultType="com.yjcaifu.modules.generator.entity.BorTaxRecordEntity">
+			select 
+				a.*
+			from 
+				bor_tax_record a 
+			where a.tax_id=#{taxConditionId}
+		</select>
+
+		<!-- 批量所有水电税票记录（param：tax_id）-->
+		<delete id="deleteAllByRefId" >
+			delete from bor_tax_record where tax_id=#{taxConditionId}
+   		 </delete>
+   		 
+   		<!-- 批量删除流水明细信息param:银行流水主表id-->
+		<delete id="deleteBatchByMainTabIds" >
+			delete from bor_tax_record where 
+	        	<foreach collection="list" item="mainTabIds"  open=" tax_id in  (" separator="," close=")" >
+	            	#{mainTabIds}
+	        	</foreach>
+   		 </delete>
+</mapper>

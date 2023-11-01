@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.sys.dao.SysDeptDao">
+
+	<!-- 根据ParentId查询上级部门名 -->
+	<select id="selectParentName" resultType="string">
+		SELECT 
+			name 
+		FROM 
+			sys_dept
+		WHERE 
+			dept_id = #{parentId}
+	</select>
+	
+	<select id="queryListParentId" resultType="com.yjcaifu.modules.sys.entity.SysDeptEntity">
+		select * from sys_dept where parent_id = #{parentId} order by order_num asc
+	</select>
+
+
+</mapper>

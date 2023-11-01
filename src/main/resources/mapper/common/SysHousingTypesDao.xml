@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.common.dao.SysHousingTypesDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.yjcaifu.common.entity.SysHousingTypesEntity" id="sysHousingTypesMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+		<!-- 查询所有List信息 -->
+		<select id="queryList" resultType="com.yjcaifu.common.entity.SysHousingTypesEntity">
+			select * from sys_housing_types
+		</select>
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.BorOssDao">
+
+
+		<select id="listByRefId" resultType="com.yjcaifu.modules.generator.entity.BorOssEntity">
+			select 
+				a.*,b.name as certificateName
+			from 
+				bor_oss a left join sys_certificate_type b on a.certificate_type=b.id 
+			where a.ref_id=#{refId}
+		</select>
+		
+		
+		<!-- 根据企业基础资料id删除数据-->
+		<delete id="deleteByBorOssId" >
+			delete from bor_oss where id=#{id}
+   		 </delete>
+
+ 		 <!-- 批量删除企业基础资料 para：进件id-->
+		<delete id="deleteBatchByRefIds" >
+        	delete from bor_oss where  
+        	<foreach collection="list"  open="ref_id in (" close=")" item="refIds" separator=",">
+            		#{refIds}
+        	</foreach>
+   		 </delete>
+</mapper>

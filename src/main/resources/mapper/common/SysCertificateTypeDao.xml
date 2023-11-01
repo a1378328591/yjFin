@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.common.dao.SysCertificateTypeDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.yjcaifu.common.entity.SysCertificateTypeEntity" id="sysCertificateTypeMap">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+    
+    
+    <select id="allList" resultType="com.yjcaifu.common.entity.SysCertificateTypeEntity">
+			select 
+				a.*
+			from 
+				sys_certificate_type a
+		</select>
+
+
+</mapper>

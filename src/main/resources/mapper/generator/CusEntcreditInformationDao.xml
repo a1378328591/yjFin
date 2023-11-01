@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.CusEntcreditInformationDao">
+
+
+		<!-- 查询所有企业征信信息（根据姓名） -->
+		<select id="selectAll" resultType="com.yjcaifu.modules.generator.entity.CusEntcreditInformationEntity">
+			select 
+				a.*,b.enterprise_name as enterprisename
+			from 
+				cus_entcredit_information a left join cus_enterprise_info b on a.ref_id=b.id where 1=1 
+			<if test="enterprisename != null and enterprisename !='' ">
+				and b.enterprise_name like concat('%',#{enterprisename},'%')
+			</if>
+			order by report desc
+		</select>
+
+		<insert id="insertAndReturnId" useGeneratedKeys="true" keyProperty="id" parameterType="com.yjcaifu.modules.generator.entity.CusEntcreditInformationEntity">  
+		<selectKey resultType="java.lang.Integer" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID() AS id
+		</selectKey>
+    	INSERT INTO cus_entcredit_information (id, ref_id, report, loan_balance, due_amount, debt_detail, overdue_situation, abnormal_condition) 
+    	values (#{id}, #{refId}, #{report}, #{loanBalance}, #{dueAmount}, #{debtDetail}, #{overdueSituation}, #{abnormalCondition})
+		</insert>
+		
+		
+		<!-- 根据企业id查询征信信息 -->
+		<select id="selectByPerId" resultType="com.yjcaifu.modules.generator.entity.CusEntcreditInformationEntity">
+			select a.* from cus_entcredit_information a  where a.ref_id = #{entId}
+		</select>
+		
+		<!-- 查询所有借款/担保企业征信信息Page params：ids-->
+		<select id="pageByIds" resultType="com.yjcaifu.modules.generator.entity.CusEntcreditInformationEntity">
+			SELECT a.*,b.enterprise_name  as enterprisename from cus_entcredit_information a left join cus_enterprise_info b on a.ref_id=b.id where 1=1 
+			<if test="ids != null ">
+				<foreach collection="ids"  open=" and a.ref_id in(" close=")" item="id" separator=",">
+            		#{id}
+        		</foreach>
+			</if>
+		</select>
+		<!-- 查询所有借款/担保企业征信信息List。 params：ids-->
+		<select id="listByIds" resultType="com.yjcaifu.modules.generator.entity.CusEntcreditInformationEntity">
+			SELECT a.*,b.enterprise_name  as enterprisename from cus_entcredit_information a left join cus_enterprise_info b on a.ref_id=b.id where 1=1 
+			<if test="ids != null ">
+				<foreach collection="ids"  open=" and a.id in(" close=")" item="id" separator=",">
+            		#{id}
+        		</foreach>
+			</if>
+		</select>
+		
+		<!-- 根据征信信息Id查询用户信息 -->
+		<select id="selectById" resultType="com.yjcaifu.modules.generator.entity.CusEntcreditInformationEntity">
+			select a.*,b.enterprise_name as enterprisename from cus_entcredit_information a left JOIN cus_enterprise_info b on a.ref_id=b.id where a.id = #{id}
+		</select>
+		<!-- 查询所有借款/担保企业征信信息List。 params：entIds-->
+		<select id="queryListByEntIds" resultType="Integer">
+			SELECT a.id from cus_entcredit_information a inner join cus_enterprise_info b on a.ref_id=b.id where 
+				<foreach collection="list"  open=" b.id in(" close=")" item="ids" separator=",">
+            		#{ids}
+        		</foreach>
+		</select>
+</mapper>

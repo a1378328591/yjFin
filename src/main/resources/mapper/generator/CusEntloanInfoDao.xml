@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.CusEntloanInfoDao">
+
+		<!-- 批量删除贷款信息（para：个人征信id）-->
+		<delete id="deleteByCreditId" >
+		delete from cus_entloan_info where ref_id in 
+	        	<foreach collection="list" item="ids"  open="(" separator="," close=")" >
+	            	#{ids}
+	        	</foreach>
+   		 </delete>
+
+
+		<!-- 查询所有企业信息List（para：企业征信id） -->
+		<select id="queryListByCreditId" resultType="com.yjcaifu.modules.generator.entity.CusEntloanInfoEntity">
+			select * from cus_entloan_info a where  a.ref_id=#{id}
+		</select>
+		
+		
+		<!-- 批量删除企业贷款信息by 企业征信id-->
+		<delete id="deleteAllByEntCreditId" >
+        	delete from cus_entloan_info where ref_id = #{id} 
+   		 </delete>
+</mapper>

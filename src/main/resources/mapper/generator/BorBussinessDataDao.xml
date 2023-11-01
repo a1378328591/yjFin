@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.BorBussinessDataDao">
+
+
+
+		<select id="queryByRefId" resultType="com.yjcaifu.modules.generator.entity.BorBussinessDataEntity">
+			select 
+				a.*
+			from 
+				bor_bussiness_data a
+			where a.ref_id=#{refId}
+		</select>
+		
+		 <!-- 查询企业财务数据分析params：refIds-->
+		<select id="queryListByRefIds" resultType="Integer">
+			select a.id
+			from 
+				bor_bussiness_data a  where 1=1 and 
+				<foreach collection="list"  open=" a.ref_id in(" close=")" item="refIds" separator=",">
+            		#{refIds}
+        		</foreach>
+		</select>
+</mapper>

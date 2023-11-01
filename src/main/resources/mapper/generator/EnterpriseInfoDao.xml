@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.EnterpriseInfoDao">
+
+	
+		<!-- 根据userId查询用户信息 -->
+		<select id="selectById" resultType="com.yjcaifu.modules.generator.entity.EnterpriseInfoEntity">
+			select a.* from cus_enterprise_info a  where a.id = #{id}
+		</select>
+		
+		
+		<!-- 查询所有企业信息List-->
+		<select id="selectPage" resultType="com.yjcaifu.modules.generator.entity.EnterpriseInfoEntity">
+			select a.* from cus_enterprise_info a  where 1=1 
+			<if test="enterprisename != null and enterprisename !='' ">
+				and a.enterprise_name like concat(#{enterprisename},'%') 
+			</if>
+			order by id desc
+		</select>
+		
+		<!-- 查询所有企业信息List-->
+		<select id="queryEnterpriseList" resultType="com.yjcaifu.modules.generator.entity.EnterpriseInfoEntity">
+			select a.* from cus_enterprise_info a  where 1=1 
+			<if test="enterprisename != null and enterprisename !='' ">
+				and a.enterprise_name like concat(#{enterprisename},'%') 
+			</if>
+			<if test="id != null and id !='' ">
+				and a.id = #{id}
+			</if>
+			<if test="enterpriseId != null ">
+				<foreach collection="enterpriseId"  open=" and a.id in(" close=")" item="id" separator=",">
+            		#{id}
+        		</foreach>
+			</if>
+			
+		</select>
+		
+		<!-- 进件管理:params: -->
+		<select id="intoManageEntSel" resultType="com.yjcaifu.modules.generator.entity.EnterpriseInfoEntity">
+			select a.* from cus_enterprise_info a 
+			where a.id=#{coBorrowerId}
+		</select>
+		
+		<!-- 查询所有企业信息Page,包含担保企业信息。 params：ids-->
+		<select id="pageByIds" resultType="com.yjcaifu.modules.generator.entity.EnterpriseInfoEntity">
+			select a.* from cus_enterprise_info a  where 1=1 
+			<if test="ids != null ">
+				<foreach collection="ids"  open=" and a.id in(" close=")" item="id" separator=",">
+            		#{id}
+        		</foreach>
+			</if>
+		</select>
+		
+		<!-- 查询所有企业信息List,包含担保企业信息。 params：ids-->
+		<select id="listByIds" resultType="com.yjcaifu.modules.generator.entity.EnterpriseInfoEntity">
+			select a.*,a.id as borrCompanyId from cus_enterprise_info a  where 1=1 
+			<if test="ids != null ">
+				<foreach collection="ids"  open=" and a.id in(" close=")" item="id" separator=",">
+            		#{id}
+        		</foreach>
+			</if>
+		</select>
+		
+		<!-- // 房产-个人/企业信息 （params：OwnerType，realname）-->
+		<select id="nameListByOwnerType" resultType="com.yjcaifu.modules.generator.entity.TempNameEntity">
+			select a.id,a.enterprise_name as realname from cus_enterprise_info a  where  a.enterprise_name like concat(#{realname},'%') 
+		</select>
+		
+		<!-- // 房产-个人/企业信息 （params：OwnerType，id）-->
+		<select id="nameListById" resultType="com.yjcaifu.modules.generator.entity.TempNameEntity">
+			select a.id,a.enterprise_name as realname from cus_enterprise_info a  where  a.id = #{id}
+		</select>
+</mapper>

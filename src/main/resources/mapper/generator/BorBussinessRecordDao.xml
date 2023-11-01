@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.BorBussinessRecordDao">
+
+	
+		<!-- 删除所有企业财务数据，param：主表id-->
+		<delete id="deleteAllByRefId" >
+			delete from bor_bussiness_record where ref_id=#{bussinessDataId}
+   		 </delete>
+   		 
+   		 <select id="queryAllByBussDataId" resultType="com.yjcaifu.modules.generator.entity.BorBussinessRecordEntity">
+			select 
+				a.*
+			from 
+				bor_bussiness_record a 
+			where a.ref_id=#{bussinessDataId}
+			order by id asc
+		</select>
+
+		<!-- 批量删除企业财务数据（paras：mianTabIds）-->
+		<delete id="deleteBatchByMainTabId" >
+        	delete from bor_bussiness_record  where 
+				<foreach collection="list"  open=" ref_id in(" close=")" item="mainTabIds" separator=",">
+            		#{mainTabIds}
+        		</foreach>
+   		</delete>
+
+</mapper>

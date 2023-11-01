@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.yjcaifu.modules.generator.dao.BorBankStatementDao">
+
+		
+		<select id="queryByRefId" resultType="com.yjcaifu.modules.generator.entity.BorBankStatementEntity">
+			select 
+				a.*
+			from 
+				bor_bank_statement a
+			where a.ref_id=#{refId}
+		</select>
+
+		<!-- 批量删除个人征信从表信息-->
+		<delete id="deleteNotInIds" >
+			delete from bor_bank_statement where ref_id=#{refId} 
+			<if test="borbankIntegers != null ">
+	        	<foreach collection="borbankIntegers" item="id"  open=" and id not in  (" separator="," close=")" >
+	            	#{id}
+	        	</foreach>
+			</if>
+   		 </delete>
+   		 
+   		  <!-- 查询所有银行流水信息params：refIds-->
+		<select id="queryListIdByRefId" resultType="Integer">
+			select a.id
+			from 
+			bor_bank_statement a  where 1=1 and 
+				<foreach collection="list"  open=" a.ref_id in(" close=")" item="refIds" separator=",">
+            		#{refIds}
+        		</foreach>
+		</select>
+</mapper>
